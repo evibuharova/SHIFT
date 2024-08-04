@@ -1,6 +1,8 @@
 package org.example;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 //    public static void main(String[] args) throws Exception {
@@ -11,13 +13,23 @@ public class Main {
 //        reader.close();//        fileName.close();
 
     public static void main(String[] args) {
-        Statistic statistic=new Statistic("-f");
-        readeFile("/Users/evi/Documents/SHIFTNEW/files/in1.txt", false, statistic);
-        readeFile("/Users/evi/Documents/SHIFTNEW/files/in2.txt", true, statistic);
+        List<String> argsList = Arrays.asList(args);
+
+        // "/Users/evi/Documents/SHIFTNEW/files/in1.txt"
+        List<String> files = ArgsHelper.getFiles(argsList);
+
+        String statisticType = ArgsHelper.getStatisticType(argsList);
+        String outputPath = ArgsHelper.getOutputPath(argsList);
+        String filePrefix = ArgsHelper.getFilePrefix(argsList);
+
+        Statistic statistic = new Statistic(statisticType);
+        for (int i = 0; i < files.size(); i++) {
+            readFile(files.get(i), i!=0, statistic, outputPath, filePrefix);
+        }
         statistic.printStatistic();
     }
 
-    public static void readeFile(String fileName, boolean append,Statistic statistic) {
+    public static void readFile(String fileName, boolean append, Statistic statistic, String outputPath, String filePrefix) {
         BufferedReader reader;
         FileWriter writerInteger;
         FileWriter writerFloat;
@@ -25,9 +37,9 @@ public class Main {
 
         try {
             reader = new BufferedReader(new FileReader(fileName));
-            writerInteger = new FileWriter("src/outInteger.txt", append);
-            writerFloat = new FileWriter("src/outFloat.txt", append);
-            writerString = new FileWriter("src/outString.txt", append);
+            writerInteger = createWriter(outputPath + filePrefix + "outInteger.txt", append);
+            writerFloat = createWriter(outputPath + filePrefix + "outFloat.txt", append);
+            writerString = createWriter(outputPath + filePrefix + "outString.txt", append);
 
             String line = reader.readLine();
             while (line != null) {
@@ -50,7 +62,7 @@ public class Main {
                 } else {
                     writerString.append(line);
                     writerString.append("\n");
-                    
+
                     statistic.collectString();
                 }
                 line = reader.readLine();
@@ -63,4 +75,17 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+    private static FileWriter createWriter(String path, boolean append) throws IOException {
+        File file = new File(path);
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            // TODO Не получилось создать файл - вывести в консоль?
+        }
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        return new FileWriter(file, append);
+    }
+
 }
