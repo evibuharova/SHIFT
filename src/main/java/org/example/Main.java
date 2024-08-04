@@ -28,7 +28,9 @@ public class Main {
         float maxValueFloat=Float.MIN_VALUE;
         float minValueFloat=Float.MAX_VALUE;
         int sumInteger=0;
-        int sumFloat=0;
+        float sumFloat=0f;
+        int averageInteger=0;
+        float averageFloat=0;
         try {
             reader = new BufferedReader(new FileReader(fileName));
             writerInteger = new FileWriter("src/outInteger.txt", append);
@@ -47,7 +49,7 @@ public class Main {
                         int intLine=Integer.parseInt(line);
                         writerInteger.append(line);
                         writerInteger.append("\n");
-                        sumInteger=intLine++;
+                        sumInteger=intLine+sumInteger;
                         countLinesIntegers ++;
                         if (minValueInteger > intLine) {
                             minValueInteger=intLine;
@@ -66,6 +68,7 @@ public class Main {
                         float floatLine=Float.parseFloat(line);
                     writerFloat.append(line);
                     writerFloat.append("\n");
+                    sumFloat=floatLine+sumFloat;
                         countLinesFloats ++;
                         if (minValueFloat > floatLine) {
                             minValueFloat=floatLine;
@@ -96,6 +99,8 @@ public class Main {
             writerFloat.flush();
             writerString.flush();
             reader.close();
+            averageInteger=(sumInteger/countLinesIntegers);
+            averageFloat=(sumFloat/countLinesFloats);
             if (statistic=="-s")
             {
             System.out.println("Count of integer`s line is " + countLinesIntegers);
@@ -105,7 +110,10 @@ public class Main {
             System.out.println("Max value of integer`s line is " + maxValueInteger);
             System.out.println("Min value of float`s line is " + minValueFloat);
             System.out.println("Max value of float`s line is " + maxValueFloat);
-            System.out.println("Summ integers is " + sumInteger);
+            System.out.println("Sum integers is " + sumInteger);
+            System.out.println("Sum floats is " + sumFloat);
+            System.out.println("Average integers is " + averageInteger);
+            System.out.println("Average floats is " + averageFloat);
             }
             else if (statistic=="-f") {
 
